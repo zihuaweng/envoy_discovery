@@ -255,12 +255,12 @@ func main() {
 			})
 		}
 
-		log.Infof("%v", locEndpoints)
-
 		c := []types.Resource{&endpoint.ClusterLoadAssignment{
 			ClusterName: clusterName,
 			Endpoints:   locEndpoints,
 		}}
+		// =================================================================================
+		log.Infof("%v", c)
 		// =================================================================================
 		atomic.AddInt32(&version, 1)
 		log.Infof(">>>>>>>>>>>>>>>>>>> creating snapshot Version " + fmt.Sprint(version))

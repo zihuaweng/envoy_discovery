@@ -1,3 +1,6 @@
+# Note
+This is a flock of github repo: https://github.com/salrashid123/envoy_discovery
+
 # Envoy EDS "hello world"
 A simple app demonstrating a small part of [Envoy's Endpoint Discovery Service](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/eds.proto#envoy-api-file-envoy-api-v2-eds-proto).  THis is a sample walkthough of a trivial 
 envoy config that sets up:

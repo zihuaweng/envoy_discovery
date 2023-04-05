@@ -40,7 +40,15 @@ static_resources:
   - name: service_backend
     type: EDS  
     connect_timeout: 0.25s
-    ignore_health_on_host_removal: true  
+    ignore_health_on_host_removal: true
+    lb_policy: ROUND_ROBIN
+    health_checks: 
+      - timeout: 1s
+        interval: 1s
+        unhealthy_threshold: 1
+        healthy_threshold: 1
+        http_health_check: 
+          path: /healthz
     eds_cluster_config:
       service_name: myservice
       eds_config:

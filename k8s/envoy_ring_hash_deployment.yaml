@@ -1,0 +1,42 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: envoy-ring-hash
+  name: envoy-ring-hash
+  namespace: envoy-dns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: envoy-ring-hash
+  template:
+    metadata:
+      labels:
+        app: envoy-ring-hash
+      name: envoy-ring-hash
+    spec:
+      containers:
+        - name: envoy
+          image: envoyproxy/envoy:v1.24.1
+          command: 
+            - "/usr/local/bin/envoy"
+          args:
+            - "--config-path /etc/envoy-config/envoy.yaml"
+            - "--mode serve"
+            - "--service-cluster frontend"
+          ports:
+            - containerPort: 10000
+              protocol: TCP
+              name: app
+            - containerPort: 9000
+              protocol: TCP
+              name: envoy-admin
+          volumeMounts:
+            - name: envoy-config
+              mountPath: /etc/envoy-config
+      volumes:
+        - name: envoy-config
+          configMap:
+            name: envoy-ring-hash-config

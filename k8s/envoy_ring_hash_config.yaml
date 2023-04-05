@@ -31,37 +31,36 @@ static_resources:
               domains: ["*"]
               routes:
               - match: { prefix: "/" }
-                route: { cluster: service_backend }
+                route: 
+                  cluster: service_backend
+                  hash_policy: 
+                  - header:
+                      header_name: X-Custom-Header
           http_filters:
           - name: envoy.filters.http.router
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router         
   clusters:
   - name: service_backend
-    type: EDS  
-    connect_timeout: 0.25s
-    ignore_health_on_host_removal: true  
-    eds_cluster_config:
-      service_name: myservice
-      eds_config:
-        resource_api_version: V3
-        api_config_source:
-          api_type: GRPC
-          transport_api_version: V3
-          grpc_services:
-          - envoy_grpc:
-              cluster_name: eds_cluster
-          refresh_delay: 5s
-  - name: eds_cluster
-    type: STATIC
-    connect_timeout: 0.25s
-    http2_protocol_options: {}
+    type: STRICT_DNS  
+    lb_policy: RING_HASH
+    typed_dns_resolver_config:
+      name: envoy.network.dns_resolver.cares
+      typed_config: 
+        "@type": type.googleapis.com/envoy.extensions.network.dns_resolver.cares.v3.CaresDnsResolverConfig
+        resolvers: 
+          - socket_address:
+              address: 10.96.5.5
+    ring_hash_lb_config:
+      minimum_ring_size: 1024
+      maximum_ring_size: 8192
     load_assignment:
-      cluster_name: eds_cluster
+      cluster_name: upstream_cluster
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: 127.0.0.1
-                port_value: 8080
+                address: upstream
+                port_value: 8000
+    
